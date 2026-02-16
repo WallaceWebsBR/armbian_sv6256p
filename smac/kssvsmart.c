@@ -118,11 +118,11 @@ int ssv6xxx_send_si_cmd(u32 smart_icomm_cmd)
     host_cmd->h_cmd = (u8)SSV6XXX_HOST_CMD_SMART_ICOMM;
     host_cmd->len = skb->data_len;
     printk("smart icomm, cmd: %d, ch_cfg_size : %d\n", smart_icomm_cmd, sh->ch_cfg_size);
-    memcpy(host_cmd->dat8, &smart_icomm_cmd, sizeof(u32));
-    memcpy(host_cmd->dat8 + sizeof(u32), &sh->ch_cfg_size, sizeof(u32));
-    memcpy(host_cmd->dat8 + sizeof(s32) + sizeof(s32), sh->p_ch_cfg, total_ch_cfg_size);
+    memcpy((u8 *)host_cmd->dat8, &smart_icomm_cmd, sizeof(u32));
+    memcpy((u8 *)host_cmd->dat8 + sizeof(u32), &sh->ch_cfg_size, sizeof(u32));
+    memcpy((u8 *)host_cmd->dat8 + sizeof(s32) + sizeof(s32), sh->p_ch_cfg, total_ch_cfg_size);
     for (i = 0; i < sh->ch_cfg_size; i++) {
-        memcpy(&ch, host_cmd->dat8+sizeof(u32) + sizeof(u32) + (i * sizeof(struct ssv6xxx_ch_cfg)), sizeof(struct ssv6xxx_ch_cfg));
+        memcpy(&ch, (u8 *)host_cmd->dat8 + sizeof(u32) + sizeof(u32) + (i * sizeof(struct ssv6xxx_ch_cfg)), sizeof(struct ssv6xxx_ch_cfg));
         printk("reg: 0x%08x, ch1: 0x%08x, ch13: 0x%08x\n", ch.reg_addr, ch.ch1_12_value, ch.ch13_14_value);
     }
     ret = HCI_SEND_CMD(sh, skb);

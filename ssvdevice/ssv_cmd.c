@@ -1202,7 +1202,7 @@ void ssv6xxx_send_noa_cmd(struct ssv_softc *sc, struct ssv6xxx_p2p_noa_param *p2
     host_cmd->c_type = HOST_CMD;
     host_cmd->h_cmd = (u8)SSV6XXX_HOST_CMD_SET_NOA;
     host_cmd->len = skb->data_len;
-    memcpy(host_cmd->dat32, p2p_noa_param, sizeof(struct ssv6xxx_p2p_noa_param));
+    memcpy((void *)host_cmd->dat32, p2p_noa_param, sizeof(struct ssv6xxx_p2p_noa_param));
     while((HCI_SEND_CMD(sc->sh, skb)!=0)&&(retry_cnt)) {
         printk(KERN_INFO "NOA cmd retry=%d!!\n",retry_cnt);
         retry_cnt--;
@@ -1427,9 +1427,9 @@ static int ssv_cmd_iqk (struct ssv_softc *sc, int argc, char *argv[])
         host_cmd->len = skb->data_len;
         cmd_iqk_cfg.phy_tbl_size = phy_setting_size;
         cmd_iqk_cfg.rf_tbl_size = rf_setting_size;
-        memcpy(host_cmd->dat32, &cmd_iqk_cfg, IQK_CFG_LEN);
-        memcpy(host_cmd->dat8+IQK_CFG_LEN, phy_tbl, phy_setting_size);
-        memcpy(host_cmd->dat8+IQK_CFG_LEN+phy_setting_size, rf_tbl, rf_setting_size);
+        memcpy((void *)host_cmd->dat32, &cmd_iqk_cfg, IQK_CFG_LEN);
+        memcpy((u8 *)host_cmd->dat8 + IQK_CFG_LEN, phy_tbl, phy_setting_size);
+        memcpy((u8 *)host_cmd->dat8 + IQK_CFG_LEN + phy_setting_size, rf_tbl, rf_setting_size);
         if (sc->sh->hci.hci_ops->hci_send_cmd(sc->sh->hci.hci_ctrl, skb) == 0) {
             snprintf_res(cmd_data, "## hci send cmd success\n");
         } else {
@@ -1608,7 +1608,7 @@ static int ssv_cmd_rxtput(struct ssv_softc *sc, int argc, char *argv[])
     host_cmd->c_type = HOST_CMD;
     host_cmd->h_cmd = (u8)SSV6XXX_HOST_CMD_RX_TPUT;
     host_cmd->len = skb->data_len;
-    memcpy(host_cmd->dat32, &cmd_rxtput_cfg, sizeof(struct sdio_rxtput_cfg));
+    memcpy((void *)host_cmd->dat32, &cmd_rxtput_cfg, sizeof(struct sdio_rxtput_cfg));
     if (sc->sh->hci.hci_ops->hci_send_cmd(sc->sh->hci.hci_ctrl, skb) == 0) {
         snprintf_res(cmd_data, "## hci cmd was sent successfully\n");
     } else {

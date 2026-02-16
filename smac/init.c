@@ -208,9 +208,9 @@ int ssv6xxx_do_iq_calib(struct ssv_hw *sh, struct ssv6xxx_iqk_cfg *p_cfg)
     host_cmd->len = skb->data_len;
     p_cfg->phy_tbl_size = PHY_SETTING_SIZE;
     p_cfg->rf_tbl_size = RF_SETTING_SIZE;
-    memcpy(host_cmd->dat32, p_cfg, IQK_CFG_LEN);
-    memcpy(host_cmd->dat8+IQK_CFG_LEN, phy_setting, PHY_SETTING_SIZE);
-    memcpy(host_cmd->dat8+IQK_CFG_LEN+PHY_SETTING_SIZE, ssv6200_rf_tbl, RF_SETTING_SIZE);
+    memcpy((void *)host_cmd->dat32, p_cfg, IQK_CFG_LEN);
+    memcpy((u8 *)host_cmd->dat8 + IQK_CFG_LEN, phy_setting, PHY_SETTING_SIZE);
+    memcpy((u8 *)host_cmd->dat8 + IQK_CFG_LEN + PHY_SETTING_SIZE, ssv6200_rf_tbl, RF_SETTING_SIZE);
     HCI_SEND_CMD(sh, skb);
     ssv_skb_free(sh->sc, skb);
     {
