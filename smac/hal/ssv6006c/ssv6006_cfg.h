@@ -13,7 +13,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __SSV6006_H___
+#ifndef __SSV6006_H__
 #define __SSV6006_H__
 #include <linux/device.h>
 #include <linux/interrupt.h>
