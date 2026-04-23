@@ -17,6 +17,9 @@
 #include <linux/etherdevice.h>
 #include <linux/delay.h>
 #include <linux/version.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+#include <linux/timer.h>
+#endif
 #include <linux/time.h>
 #include <linux/kthread.h>
 #include <linux/sched/clock.h>
@@ -3243,7 +3246,11 @@ tx_mpdu:
         return 0;
     }
     void ssv6xxx_house_keeping(struct timer_list *t) {
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+        struct ssv_softc *sc = container_of(t, struct ssv_softc, house_keeping);
+#else
         struct ssv_softc *sc = from_timer(sc, t, house_keeping);
+#endif
         if (!sc->mac80211_dev_started ||
             (sc->sc_flags & SC_OP_HW_RESET) ||
             (sc->sc_flags & SC_OP_BLOCK_CNTL))
@@ -3612,7 +3619,11 @@ tx_mpdu:
         }
         return assoc;
     }
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+    static int ssv6200_config(struct ieee80211_hw *hw, int action, u32 changed) {
+#else
     static int ssv6200_config(struct ieee80211_hw *hw, u32 changed) {
+#endif
         struct ssv_softc *sc=hw->priv;
         int ret=0;
         HCI_WRITE_HW_CONFIG_ON(sc->sh);

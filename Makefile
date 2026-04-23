@@ -1,3 +1,4 @@
+ccflags-y += -I$(src)/include -I$(src)
 KMODULE_NAME = ssv6x5x
 
 # Use the directory where this Makefile is located

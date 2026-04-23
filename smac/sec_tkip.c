@@ -32,7 +32,15 @@
 #include <crypto/hash.h>
 #include <crypto/skcipher.h>
 #include <linux/crc32.h>
+#include <linux/version.h>
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 15, 0)
 #include <net/lib80211.h>
+#endif
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+#ifndef IEEE80211_CRYPTO_TKIP_COUNTERMEASURES
+#define IEEE80211_CRYPTO_TKIP_COUNTERMEASURES (1 << 1)
+#endif
+#endif
 #include "sec.h"
 #define TKIP_HDR_LEN 8
 struct lib80211_tkip_data {

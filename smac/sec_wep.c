@@ -23,7 +23,10 @@
 #include <linux/skbuff.h>
 #include <linux/mm.h>
 #include <asm/string.h>
+#include <linux/version.h>
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 15, 0)
 #include <net/lib80211.h>
+#endif
 #include <linux/crypto.h>
 #include <crypto/skcipher.h>
 #include <linux/crc32.h>

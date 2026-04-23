@@ -767,7 +767,12 @@ static int ssv6xxx_deinit_softc(struct ssv_softc *sc)
     flush_workqueue(sc->rc_report_workqueue);
     destroy_workqueue(sc->rc_report_workqueue);
     destroy_workqueue(sc->config_wq);
+#include <linux/version.h>
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(6, 15, 0)
+    timer_delete_sync(&sc->house_keeping);
+#else
     del_timer_sync(&sc->house_keeping);
+#endif
     destroy_workqueue(sc->house_keeping_wq);
     return 0;
 }
