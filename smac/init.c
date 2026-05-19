@@ -2074,7 +2074,11 @@ static void ssv6xxx_stop_all_running_threads(struct ssv_softc *sc)
         dev_dbg(sc->dev, "HCI TX task is stopped.");
     }
 }
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
+static int tu_ssv6xxx_dev_remove(struct platform_device *pdev)
+#else
 static void tu_ssv6xxx_dev_remove(struct platform_device *pdev)
+#endif
 {
     struct ieee80211_hw *hw=dev_get_drvdata(&pdev->dev);
     struct ssv_softc *sc=hw->priv;
@@ -2084,6 +2088,9 @@ static void tu_ssv6xxx_dev_remove(struct platform_device *pdev)
     dev_dbg(sc->dev, "ieee80211_free_hw(): ");
     ieee80211_free_hw(hw);
     dev_info(sc->dev, "ssv6200: Driver unloaded");
+#if LINUX_VERSION_CODE < KERNEL_VERSION(6, 11, 0)
+    return 0;
+#endif
 }
 // EXPORT_SYMBOL(tu_ssv6xxx_dev_remove);
 static const struct platform_device_id ssv6xxx_id_table[] = {

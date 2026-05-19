@@ -1,17 +1,17 @@
-# SSV6256P (SSV6X5X) WiFi Driver for Linux Kernel 6.12+
+# SSV6256P (SSV6X5X) WiFi Driver for Linux Kernel 6.x+
 
-This repository contains my port of the **SV6256P / SSV6X5X SDIO Wi‑Fi driver** from legacy Linux 4.4 to **Linux 6.12 and above**.  
+This repository contains my port of the **SV6256P / SSV6X5X SDIO Wi‑Fi driver** from legacy Linux 4.4 to **Linux 6.x and above**.  
 The driver now builds and runs on modern kernels, with updated mac80211/cfg80211 integration.
 
 [![License](https://img.shields.io/badge/License-Dual%20BSD%2FGPL-blue.svg)](LICENSE)
-[![Kernel](https://img.shields.io/badge/Kernel-6.12+-green.svg)](https://kernel.org/)
+[![Kernel](https://img.shields.io/badge/Kernel-6.0+-green.svg)](https://kernel.org/)
 [![Architecture](https://img.shields.io/badge/Arch-ARM64-orange.svg)](https://www.kernel.org/doc/html/latest/arm64/index.html)
 
 ## 📖 Background
 
 The SSV6256P is a dual-band WiFi chipset from iComm Semiconductor, commonly found in low-cost TV boxes, embedded Linux devices, and IoT applications. The original driver was designed for Linux kernel 4.4, but modern Linux distributions use kernel 6.x which introduced significant changes to the mac80211 wireless stack.
 
-This repository contains a fully functional port of the SSV6256P driver to Linux kernel 6.12+, with all necessary API adaptations and bug fixes.
+This repository contains a fully functional port of the SSV6256P driver to Linux kernel 6.x+, with all necessary API adaptations and bug fixes.
 
 ### Tested Hardware
 
@@ -24,9 +24,10 @@ This repository contains a fully functional port of the SSV6256P driver to Linux
 
 | Kernel Version | Status | Notes |
 |---------------|--------|-------|
-| 6.12.x | ✅ Tested | Fully working |
-| 6.13.x+ | ✅ Expected | Should work (API-compatible) |
-| 6.6 LTS | ⚠️ Untested | May work with minor adjustments |
+| 6.12.x  | ✅ Tested    | Tested on 6.12.11 |
+| 6.13.x+ | ✅ Tested    | Tested on 6.18.23 |
+| 7.0.x+  | ✅ Expected  | Should work (API-compatible) |
+| 6.6 LTS | ✅ Tested    | Tested on 6.6.44 |
 | 5.x | ❌ Not supported | Use original driver |
 | 4.x | ❌ Not supported | Use original driver |
 
