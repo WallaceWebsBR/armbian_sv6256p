@@ -4421,7 +4421,7 @@ out:
             queue_work(sc->config_wq, &sc->set_ampdu_rx_del_work);
             break;
         case IEEE80211_AMPDU_TX_START:
-            dev_dbg(sc->dev, KERN_ERR "AMPDU_TX_START %02X:%02X:%02X:%02X:%02X:%02X %d.\n",
+            dev_dbg(sc->dev, "AMPDU_TX_START %02X:%02X:%02X:%02X:%02X:%02X %d.\n",
                    sta->addr[0], sta->addr[1], sta->addr[2], sta->addr[3],
                    sta->addr[4], sta->addr[5], tid);
             sta_priv = (struct ssv_sta_priv_data *)sta->drv_priv;
@@ -4432,14 +4432,14 @@ out:
         case IEEE80211_AMPDU_TX_STOP_CONT:
         case IEEE80211_AMPDU_TX_STOP_FLUSH:
         case IEEE80211_AMPDU_TX_STOP_FLUSH_CONT:
-            dev_dbg(sc->dev, KERN_ERR "AMPDU_TX_STOP %02X:%02X:%02X:%02X:%02X:%02X %d.\n",
+            dev_dbg(sc->dev, "AMPDU_TX_STOP %02X:%02X:%02X:%02X:%02X:%02X %d.\n",
                    sta->addr[0], sta->addr[1], sta->addr[2], sta->addr[3],
                    sta->addr[4], sta->addr[5], tid);
             ssv6200_ampdu_tx_stop(tid, sta, hw);
             ieee80211_stop_tx_ba_cb_irqsafe(vif, sta->addr, tid);
             break;
         case IEEE80211_AMPDU_TX_OPERATIONAL:
-            dev_dbg(sc->dev, KERN_ERR "AMPDU_TX_OPERATIONAL %02X:%02X:%02X:%02X:%02X:%02X %d.\n",
+            dev_dbg(sc->dev, "AMPDU_TX_OPERATIONAL %02X:%02X:%02X:%02X:%02X:%02X %d.\n",
                    sta->addr[0], sta->addr[1], sta->addr[2], sta->addr[3],
                    sta->addr[4], sta->addr[5], tid);
             ssv6200_ampdu_tx_operation(tid, sta, hw, buf_size);

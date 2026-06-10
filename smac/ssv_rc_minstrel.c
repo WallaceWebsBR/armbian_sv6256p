@@ -395,7 +395,8 @@ static void ssv6xxx_rate_update_minstrel_type(void *priv, struct ieee80211_suppo
     u8 drate_desc = 0;
     bool supportted_11m = false;
     minstrel_sta_priv->sta = sta;
-    minstrel_sta_priv->is_ht = false; /* HT check requires more research, disabling for now to allow compilation */
+    /* ht_cap moved to sta->deflink in kernel >= 5.19 (non-MLO default link) */
+    minstrel_sta_priv->is_ht = sta->deflink.ht_cap.ht_supported;
     if (minstrel_sta_priv->is_ht) {
         ssv_minstrel_ht_update_caps(priv, sband, sta, priv_sta, oper_chan_type);
         return;
