@@ -1873,7 +1873,9 @@ static int tu_ssv6xxx_init_device(struct ssv_softc *sc, const char *name)
     }
     
     ieee80211_hw_set(sc->hw, CHANCTX_STA_CSA);
-    ieee80211_hw_set(sc->hw, TX_AMPDU_SETUP_IN_HW);
+    /* Do NOT set TX_AMPDU_SETUP_IN_HW: this driver negotiates TX BA sessions
+     * in software via ieee80211_start_tx_ba_session(); with the flag set,
+     * mac80211 rejects every TX BA request with -EINVAL (see agg-tx.c). */
     ieee80211_hw_set(sc->hw, CONNECTION_MONITOR);
     ieee80211_hw_set(sc->hw, REPORTS_TX_ACK_STATUS);
     sc->hw->queues = 4;

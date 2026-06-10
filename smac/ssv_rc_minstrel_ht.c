@@ -637,12 +637,13 @@ void ssv_minstrel_ht_tx_status(struct ssv_softc *sc, void *rc_info,
     struct ssv_minstrel_ht_sta *mhs;
     struct ssv_minstrel_ht_rate_stats *rate;
     struct ssv_minstrel_priv *smp = (struct ssv_minstrel_priv *)sc->rc;
-    u16 sta_cap = 0; /* minstrel_sta_priv->sta->ht_cap.cap; - removed in newer kernels */
+    u16 sta_cap;
     int group, r_idx, short_gi, ht40, phy;
     enum nl80211_channel_type channel_type;
     int i = 0;
     if (!minstrel_sta_priv || !minstrel_sta_priv->is_ht)
         return;
+    sta_cap = minstrel_sta_priv->sta->deflink.ht_cap.cap; /* deflink for kernel >= 5.19 */
     mhs = &minstrel_sta_priv->ht;
     mhs->ampdu_packets++;
     mhs->ampdu_len += ampdu_len;
@@ -793,8 +794,8 @@ void ssv_minstrel_ht_update_caps(void *priv, struct ieee80211_supported_band *sb
     struct ssv_minstrel_priv *smp = (struct ssv_minstrel_priv *)sc->rc;
     struct ssv_minstrel_sta_priv *sta_priv = priv_sta;
     struct ssv_minstrel_ht_sta *mhs = &sta_priv->ht;
-    struct ieee80211_mcs_info *mcs = NULL; /* &sta->ht_cap.mcs; */
-    u16 sta_cap = 0; /* sta->ht_cap.cap; */
+    struct ieee80211_mcs_info *mcs = &sta->deflink.ht_cap.mcs; /* deflink for kernel >= 5.19 */
+    u16 sta_cap = sta->deflink.ht_cap.cap;
     int ack_dur;
     int stbc;
     bool is_sgi = false;
