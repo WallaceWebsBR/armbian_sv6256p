@@ -1,16 +1,14 @@
 ccflags-y += -I$(src)/include -I$(src)
 KMODULE_NAME = ssv6x5x
 
-# Use the directory where this Makefile is located
-KBUILD_TOP := $(PWD)
+# DKMS-compatible: use kbuild's $(src) when in kbuild context, fall back to $(PWD)
+KBUILD_TOP := $(or $(src),$(PWD))
 
 include $(KBUILD_TOP)/$(KMODULE_NAME).cfg
 include $(KBUILD_TOP)/platform-config.mak
 
 # Generate version strings
 # GEN_VER := $(shell cd $(KBUILD_TOP); ./ver_info.pl include/ssv_version.h)
-# Generate include/ssv_conf_parser.h
-# GEN_CONF_PARSER := $(shell cd $(KBUILD_TOP); env ccflags="$(ccflags-y)" ./parser-conf.sh include/ssv_conf_parser.h)
 # Generate $(KMODULE_NAME)-wifi.cfg
 BKP_CFG := $(shell cp "$(KBUILD_TOP)/$(KMODULE_NAME)-wifi.cfg" "$(KBUILD_TOP)/image/$(KMODULE_NAME)-wifi.cfg")
 
@@ -29,8 +27,20 @@ CFLAGS_REMOVE_*.o := -pg -mfentry
 CFLAGS_REMOVE_*.o += -mrecord-mcount
 CFLAGS_REMOVE_*.o += -mnop-mcount
 
+# Generate include/ssv_conf_parser.h (replaces parser-conf.sh)
+# Extract -D defines, strip prefix, convert '=' to '_' for C identifier safety
 DEF_PARSER_H = $(KBUILD_TOP)/include/ssv_conf_parser.h
-$(shell env ccflags="$(ccflags-y)" $(KBUILD_TOP)/parser-conf.sh $(DEF_PARSER_H))
+SSV_DEFINES := $(patsubst -D%,%,$(filter -D%,$(ccflags-y)))
+SSV_DEFINES_CLEAN := $(subst =,_,$(SSV_DEFINES))
+define SSV_CONF_PARSER_CONTENT
+#ifndef __SSV_CONF_PARSER_H__
+#define __SSV_CONF_PARSER_H__
+char const *conf_parser[] = {
+$(foreach d,$(SSV_DEFINES_CLEAN),"$(d)",
+)""};
+#endif // __SSV_CONF_PARSER_H__
+endef
+$(file >$(DEF_PARSER_H),$(SSV_CONF_PARSER_CONTENT))
 
 KERN_SRCS := ssvdevice/ssvdevice.c
 KERN_SRCS += ssvdevice/ssv_cmd.c
@@ -123,7 +133,7 @@ obj-$(CONFIG_SSV6X5X) += $(KMODULE_NAME).o
 all: modules
 	
 modules:
-	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KSRC) M=$(shell pwd) modules
+	$(MAKE) $(if $(ARCH),ARCH=$(ARCH)) $(if $(CROSS_COMPILE),CROSS_COMPILE=$(CROSS_COMPILE)) -C $(KSRC) M=$(shell pwd) modules
 
 strip:
 	$(CROSS_COMPILE)strip $(MODULE_NAME).ko --strip-unneeded

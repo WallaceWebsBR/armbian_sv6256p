@@ -52,17 +52,37 @@ sudo pacman -S base-devel linux-headers
 sudo dnf install kernel-devel kernel-headers gcc make
 ```
 
-## 🔨 Compilation
+## 🔨 Installation
+
+### Method 1: DKMS (Recommended)
+
+DKMS automatically rebuilds the driver when you upgrade the kernel.
 
 ```bash
+# Install prerequisites
+sudo apt-get install -y dkms build-essential linux-headers-$(uname -r) git
+
+# Clone and install
 git clone https://github.com/cdhigh/armbian_sv6256p.git
 cd armbian_sv6256p
-chmod +x ./parser-conf.sh
+sudo bash ./install-dkms.sh
+sudo modprobe ssv6x5x
+```
+
+### Method 2: Manual Compilation
+
+```bash
+# Install prerequisites
+sudo apt-get install -y build-essential linux-headers-$(uname -r) git
+
+# Clone and build
+git clone https://github.com/cdhigh/armbian_sv6256p.git
+cd armbian_sv6256p
 make ARCH=arm64 KSRC=/lib/modules/$(uname -r)/build
 ls -lh ssv6x5x.ko
 ```
 
-## 📥 Installation
+#### Manual Installation
 
 ```bash
 sudo cp ./ssv6x5x-wifi.cfg /lib/firmware/
@@ -70,6 +90,18 @@ sudo cp ./ssv6x5x-sw.bin /lib/firmware/
 sudo cp ./ssv6x5x.ko /lib/modules/$(uname -r)/kernel/drivers/net/wireless/
 sudo depmod -a
 sudo modprobe ssv6x5x
+```
+
+### Method 3: Armbian Extension
+
+For building custom Armbian images with SSV6X5X support:
+
+```bash
+# Copy the extension to your Armbian build environment
+cp -r armbian/extensions/ssv6x5x.sh /path/to/armbian-build/userpatches/extensions/
+
+# Build with the extension enabled
+./compile.sh ENABLE_EXTENSIONS="ssv6x5x"
 ```
 
 ## 🚀 Usage
@@ -106,7 +138,22 @@ or
 nmtui
 ```
 
+## 📦 DKMS Management
+
+```bash
+# Check driver status
+dkms status ssv6x5x
+
+# Rebuild for current kernel
+sudo dkms build ssv6x5x/6.0.0
+sudo dkms install ssv6x5x/6.0.0
+
+# Uninstall
+sudo dkms remove ssv6x5x/6.0.0 --all
+```
+
 # Credits
 * Vendor driver sources
 * Linux mac80211 maintainers for API references
 * Community help on porting legacy Wi‑Fi drivers
+

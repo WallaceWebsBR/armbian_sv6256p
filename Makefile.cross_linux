@@ -17,8 +17,20 @@ BKP_CFG := $(shell cp $(KBUILD_TOP)/$(KMODULE_NAME)-wifi.cfg $(KBUILD_TOP)/image
 
 EXTRA_CFLAGS := -I$(KBUILD_TOP) -I$(KBUILD_TOP)/include
 
+# Generate include/ssv_conf_parser.h (replaces parser-conf.sh)
+# Extract -D defines, strip prefix, convert '=' to '_' for C identifier safety
 DEF_PARSER_H = $(KBUILD_TOP)/include/ssv_conf_parser.h
-$(shell env ccflags="$(ccflags-y)" $(KBUILD_TOP)/parser-conf.sh $(DEF_PARSER_H))
+SSV_DEFINES := $(patsubst -D%,%,$(filter -D%,$(ccflags-y)))
+SSV_DEFINES_CLEAN := $(subst =,_,$(SSV_DEFINES))
+define SSV_CONF_PARSER_CONTENT
+#ifndef __SSV_CONF_PARSER_H__
+#define __SSV_CONF_PARSER_H__
+char const *conf_parser[] = {
+$(foreach d,$(SSV_DEFINES_CLEAN),"$(d)",
+)""};
+#endif // __SSV_CONF_PARSER_H__
+endef
+$(file >$(DEF_PARSER_H),$(SSV_CONF_PARSER_CONTENT))
 
 KERN_SRCS := ssvdevice/ssvdevice.c
 KERN_SRCS += ssvdevice/ssv_cmd.c
@@ -111,7 +123,7 @@ obj-$(CONFIG_SSV6X5X) += $(KMODULE_NAME).o
 all: modules
 	
 modules:
-	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $(KSRC) M=$(shell pwd) modules
+	$(MAKE) $(if $(ARCH),ARCH=$(ARCH)) $(if $(CROSS_COMPILE),CROSS_COMPILE=$(CROSS_COMPILE)) -C $(KSRC) M=$(shell pwd) modules
 
 strip:
 	$(CROSS_COMPILE)strip $(MODULE_NAME).ko --strip-unneeded
