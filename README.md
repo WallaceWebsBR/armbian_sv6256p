@@ -87,7 +87,8 @@ ls -lh ssv6x5x.ko
 ```bash
 sudo cp ./ssv6x5x-wifi.cfg /lib/firmware/
 sudo cp ./ssv6x5x-sw.bin /lib/firmware/
-sudo cp ./ssv6x5x.ko /lib/modules/$(uname -r)/kernel/drivers/net/wireless/
+sudo mkdir -p /lib/modules/$(uname -r)/kernel/drivers/net/wireless/ssv6256p/
+sudo cp ./ssv6x5x.ko /lib/modules/$(uname -r)/kernel/drivers/net/wireless/ssv6256p/
 sudo depmod -a
 sudo modprobe ssv6x5x
 ```

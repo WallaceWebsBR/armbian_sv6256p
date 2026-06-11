@@ -4,6 +4,17 @@ KMODULE_NAME = ssv6x5x
 # DKMS-compatible: use kbuild's $(src) when in kbuild context, fall back to $(PWD)
 KBUILD_TOP := $(or $(src),$(PWD))
 
+# Normalize ARCH string for Kbuild to prevent syncconfig corruption
+ifeq ($(ARCH),aarch64)
+override ARCH := arm64
+endif
+ifeq ($(ARCH),armv7l)
+override ARCH := arm
+endif
+ifeq ($(ARCH),x86_64)
+override ARCH := x86
+endif
+
 include $(KBUILD_TOP)/$(KMODULE_NAME).cfg
 include $(KBUILD_TOP)/platform-config.mak
 
